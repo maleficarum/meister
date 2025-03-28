@@ -8,7 +8,7 @@ on:
 jobs:
     plan:
         name: Plan terraform
-        uses: ./.github/workflows/pullrequest.yml
+        uses: ./.github/workflows/pr.yml
 
     apply:
         name: 'Terragrunt'
