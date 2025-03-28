@@ -19,3 +19,7 @@ jobs:
             - name: 'Terragrunt Init'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt init
               shell: bash
+
+            - name: 'Terragrunt Plan'
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt plan
+              shell: bash              
