@@ -1,8 +1,6 @@
 name: Deploy to development
 env:
-  tf_version: '1.11.3'
-  tg_version: '0.76.8'
-  tf_working_dir: '.'
+  environment: 'development'
 
 on:
     push:
@@ -15,23 +13,9 @@ jobs:
         runs-on: 'self-hosted'
     
         steps:
-            - name: Checlout
+            - name: Checkout
               uses: actions/checkout@master
             
             - name: 'Terragrunt Init'
-              uses: the-commons-project/terragrunt-github-actions@master
-              with:
-                tf_actions_version: ${{ env.tf_version }}
-                tg_actions_version: ${{ env.tg_version }}
-                tf_actions_subcommand: 'init'
-                tf_actions_working_dir: ${{ env.tf_working_dir }}
-                tf_actions_comment: true
-                
-            - name: 'Terragrunt Plan'
-              uses: the-commons-project/terragrunt-github-actions@master
-              with:
-                tf_actions_version: ${{ env.tf_version }}
-                tg_actions_version: ${{ env.tg_version }}
-                tf_actions_subcommand: 'plan'
-                tf_actions_working_dir: ${{ env.tf_working_dir }}
-                tf_actions_comment: true
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt init
+              shell: bash
