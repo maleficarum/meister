@@ -12,6 +12,7 @@ jobs:
 
     apply:
         name: 'Terragrunt'
+        needs: plan
         runs-on: 'self-hosted'
         environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
     
