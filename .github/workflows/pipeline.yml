@@ -1,6 +1,5 @@
 name: Deploy to development
 env:
-  environment: 'development'
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
 
@@ -13,6 +12,7 @@ jobs:
     terragrunt:
         name: 'Terragrunt'
         runs-on: 'self-hosted'
+        environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
     
         steps:
             - name: Checkout
