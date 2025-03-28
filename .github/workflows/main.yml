@@ -1,0 +1,12 @@
+name: On pull request
+
+on:
+    push:
+        branches:
+            - main
+            - development
+jobs:
+    plan:
+        name: Apply terraform
+        uses: ./.github/workflows/pullrequest.yml
+    
