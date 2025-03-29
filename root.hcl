@@ -17,23 +17,20 @@ generate "terraform" {
         source  = "ansible/ansible"
       }
 
-      aws = {
-        source  = "hashicorp/aws"
-        version = "~> 5.0"
-      }
+      oci = {}
 
       vault = {
         version = "~> 4.7"
       }
     }
   }
-
-  provider "aws" {
-    region = "${local.envlocals.locals.region}"
+  provider "oci" {
+    region           = "${local.envlocals.locals.region}"
   }
 
   EOF
 }
+
 
 remote_state {
   backend = "http"
