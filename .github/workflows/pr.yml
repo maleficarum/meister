@@ -5,12 +5,13 @@ env:
   environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
 
 on:
-    push:
-        branches:
-            - main
+    workflow_dispatch:
+    workflow_call:
+    pull_request:
+      branches: [ main, development ]
 
 jobs:
-    terragrunt:
+    plan:
         name: 'Terragrunt'
         runs-on: 'self-hosted'
         environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}

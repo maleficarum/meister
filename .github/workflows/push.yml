@@ -1,0 +1,22 @@
+name: On pull request
+
+on:
+    push:
+        branches:
+            - main
+            - development
+jobs:
+    plan:
+        name: Plan terraform
+        uses: ./.github/workflows/pr.yml
+
+    apply:
+        name: 'Terragrunt'
+        needs: plan
+        runs-on: 'self-hosted'
+        environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+    
+        steps:
+            - name: 'Terragrunt Apply'
+              run: echo "Done"
+              shell: bash
