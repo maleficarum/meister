@@ -3,7 +3,7 @@ variable "cluster_kube_config_token_version" {
 }
 
 data "oci_containerengine_cluster_kube_config" "kubeconfig" {
-  cluster_id = oci_containerengine_cluster.challenge-cluster.id
+  cluster_id = oci_containerengine_cluster.oci_containerengine_cluster.id
 
   #Optional
   token_version = var.cluster_kube_config_token_version
