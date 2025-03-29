@@ -1,4 +1,4 @@
 locals {
-    region = "mx-central-1"
-    environment = "development"
+    region = "us-phoenix-1"
+    environment = "production"
 }
