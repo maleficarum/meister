@@ -3,7 +3,7 @@ variable "cluster_kube_config_token_version" {
 }
 
 data "oci_containerengine_cluster_kube_config" "kubeconfig" {
-  cluster_id = oci_containerengine_cluster.oci_containerengine_cluster.id
+  cluster_id = oci_containerengine_cluster.challenge_cluster.id
 
   #Optional
   token_version = var.cluster_kube_config_token_version
@@ -11,5 +11,5 @@ data "oci_containerengine_cluster_kube_config" "kubeconfig" {
 
 resource "local_file" "kubecofig_file" {
   content  = data.oci_containerengine_cluster_kube_config.kubeconfig.content
-  filename = "kubeconfig.challenge"
+  filename = pathexpand("~/.kubeconfig/kubeconfig.challenge")
 }

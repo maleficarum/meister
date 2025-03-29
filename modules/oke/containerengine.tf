@@ -1,4 +1,4 @@
-resource "oci_containerengine_cluster" "oci_containerengine_cluster" {
+resource "oci_containerengine_cluster" "challenge_cluster" {
 	cluster_pod_network_options {
 		cni_type = "OCI_VCN_IP_NATIVE"
 	}
@@ -23,7 +23,7 @@ resource "oci_containerengine_cluster" "oci_containerengine_cluster" {
 }
 
 resource "oci_containerengine_node_pool" "node_pool" {
-	cluster_id = "${oci_containerengine_cluster.oci_containerengine_cluster.id}"
+	cluster_id = "${oci_containerengine_cluster.challenge_cluster.id}"
 	compartment_id = var.compartment
 	initial_node_labels {
 		key = "name"
