@@ -10,7 +10,7 @@ resource "aws_subnet" "public_subnet" {
   vpc_id = aws_vpc.main_pvc.id
   cidr_block = var.pubnet_cidr
 
-  availability_zone = "mx-central-1a"
+  availability_zone = var.pubnet_az
   
   tags = {
     "name" = "PublicSubnet"
@@ -20,7 +20,7 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_subnet" "private_subnet" {
   vpc_id = aws_vpc.main_pvc.id
   cidr_block = var.privnet_cidr
-  availability_zone = "mx-central-1b"
+  availability_zone = var.privnet_az
   
   tags = {
     "name" = "PrivateSubnet"
