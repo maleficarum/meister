@@ -4,6 +4,7 @@ locals {
     project = get_env("GCP_PROJECT_ID")
 
     private_subnet_region = local.tfvars.private_subnet_region
+    cluster_location = local.tfvars.cluster_location
 }
 
 generate "terraform" {
@@ -44,7 +45,7 @@ generate "module" {
 
       main_network = module.network.main_network.id
       subnetwork = module.network.subnetwork.id
-      cluster_location = "TEST"
+      cluster_location = "${local.cluster_location}"
 
       depends_on = [module.network]
 
