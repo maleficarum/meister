@@ -7,21 +7,21 @@ resource "aws_vpc" "main_pvc" {
 }
 
 resource "aws_subnet" "public_subnet" {
-  vpc_id = aws_vpc.main_pvc.id
+  vpc_id     = aws_vpc.main_pvc.id
   cidr_block = var.pubnet_cidr
 
   availability_zone = var.pubnet_az
-  
+
   tags = {
     "name" = "PublicSubnet"
   }
 }
 
 resource "aws_subnet" "private_subnet" {
-  vpc_id = aws_vpc.main_pvc.id
-  cidr_block = var.privnet_cidr
+  vpc_id            = aws_vpc.main_pvc.id
+  cidr_block        = var.privnet_cidr
   availability_zone = var.privnet_az
-  
+
   tags = {
     "name" = "PrivateSubnet"
   }
@@ -50,6 +50,6 @@ resource "aws_route_table" "public_routing_table" {
 
 resource "aws_route_table_association" "route_table_association" {
   route_table_id = aws_route_table.public_routing_table.id
-  subnet_id = aws_subnet.public_subnet.id
-  
+  subnet_id      = aws_subnet.public_subnet.id
+
 }
