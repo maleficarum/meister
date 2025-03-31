@@ -1,9 +1,13 @@
 include "root" {
   path   = find_in_parent_folders("root.hcl")
+  
+  //custom_vars = 
 }
 
 terraform {
-  source = "../..//modules/network"
+  source = "../..//modules"
+
+  //set_environment = run_cmd("export", "TG_VAR_FILE=variables.tfvars")
 
   before_hook "tflint" {
     commands     = ["apply", "plan"]

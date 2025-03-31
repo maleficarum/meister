@@ -1,7 +1,8 @@
 locals {
     envlocals =  read_terragrunt_config("env.hcl")
+    tfvars = jsondecode(read_tfvars_file("variables.tfvars"))
 
-    environment = local.envlocals.locals.environment
+    private_subnet_region = local.tfvars.private_subnet_region
 }
 
 generate "terraform" {
@@ -13,20 +14,44 @@ generate "terraform" {
     required_version = ">=1.9.7"
     required_providers {
 
-      aws = {
-        source  = "hashicorp/aws"
-        version = "~> 5.0"
+      google = {
+        source  = "hashicorp/google"
+        version = "~> 6.27.0"
       }
 
     }
   }
 
-  provider "aws" {
+  provider "google" {
+    project = "${local.envlocals.locals.project}"
     region = "${local.envlocals.locals.region}"
   }
 
   EOF
 }
+
+generate "module" {
+  path = "network.tf"
+  if_exists = "overwrite_terragrunt"
+  contents = <<EOF
+    module "network" {
+      source = ".//network"
+      private_subnet_region = "${local.private_subnet_region}"
+    }  
+    module "kubernetes" {
+      source = ".//kubernetes"
+
+      main_network = module.network.main_network.id
+      subnetwork = module.network.subnetwork.id
+      cluster_location = "TEST"
+
+      depends_on = [module.network]
+
+    }
+    
+  EOF
+}
+
 
 remote_state {
   backend = "http"
