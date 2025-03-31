@@ -24,6 +24,10 @@ jobs:
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt init
               shell: bash
 
+            - name: 'Terragrunt Lint'
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && tflint --init
+              shell: bash              
+
             - name: 'Terragrunt Plan'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt plan
               shell: bash              
