@@ -1,6 +1,7 @@
 locals {
     envlocals =  read_terragrunt_config("env.hcl")
     tfvars = jsondecode(read_tfvars_file("variables.tfvars"))
+    project = get_env("GCP_PROJECT_ID")
 
     private_subnet_region = local.tfvars.private_subnet_region
 }
@@ -23,7 +24,7 @@ generate "terraform" {
   }
 
   provider "google" {
-    project = "${local.envlocals.locals.project}"
+    project = "${local.project}"
     region = "${local.envlocals.locals.region}"
   }
 
