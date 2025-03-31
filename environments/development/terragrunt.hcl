@@ -5,7 +5,7 @@ include "root" {
 terraform {
   source = "../..//modules/network"
 
-  before_hook "tflint_hook" {
+  before_hook "tflint" {
     commands     = ["apply", "plan"]
     execute      = ["tflint"]
   }
