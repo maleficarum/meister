@@ -1,5 +1,6 @@
 locals {
     envlocals =  read_terragrunt_config("env.hcl")
+    tfvars = jsondecode(read_tfvars_file("variables.tfvars"))
 
     environment = local.envlocals.locals.environment
 }
@@ -25,6 +26,31 @@ generate "terraform" {
     region = "${local.envlocals.locals.region}"
   }
 
+  EOF
+}
+
+generate "module" {
+  path = "network.tf"
+  if_exists = "overwrite_terragrunt"
+  contents = <<EOF
+    module "network" {
+      source = ".//network"
+
+      vcn_cidr = "${local.tfvars.vcn_cidr}"
+
+    }  
+    module "kubernetes" {
+      source = ".//kubernetes"
+
+      vpc_id = module.network.main_vpc.id
+      subnet_id = module.network.subnetwork[*].id
+      cluster_name = "${local.tfvars.cluster_name}"
+      region = "${local.envlocals.locals.region}"
+
+      depends_on = [module.network]
+
+    }
+    
   EOF
 }
 

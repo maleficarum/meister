@@ -1,5 +1,0 @@
-vcn_cidr = "10.0.0.0/16"
-pubnet_cidr = "10.1.0.0/24"
-privnet_cidr = "10.2.0.0/24"
-pubnet_az = "mx-central-1a"
-privnet_az = "mx-central-1b"

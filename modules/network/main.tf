@@ -1,37 +1,43 @@
+data "aws_availability_zones" "available" {}
+
 resource "aws_vpc" "main_pvc" {
   cidr_block = var.vcn_cidr
 
   tags = {
-    "name" = "MainPVC"
+    "Name" = "MainPVC"
   }
 }
 
 resource "aws_subnet" "public_subnet" {
+  count = 2
   vpc_id     = aws_vpc.main_pvc.id
-  cidr_block = var.pubnet_cidr
+  cidr_block = cidrsubnet(aws_vpc.main_pvc.cidr_block, 8, count.index)
+  map_public_ip_on_launch = true
 
-  availability_zone = var.pubnet_az
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    "name" = "PublicSubnet"
+    "Name" = "PublicSubnet-${count.index}"
   }
 }
 
+/*
 resource "aws_subnet" "private_subnet" {
+  count = 2
   vpc_id            = aws_vpc.main_pvc.id
-  cidr_block        = var.privnet_cidr
-  availability_zone = var.privnet_az
+  cidr_block        = cidrsubnet(aws_vpc.main_pvc.cidr_block, 8, count.index)
+  availability_zone = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    "name" = "PrivateSubnet"
+    "Name" = "PrivateSubnet-${count.index}"
   }
 }
-
+*/
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.main_pvc.id
 
   tags = {
-    "name" = "InternetGateway"
+    "Name" = "InternetGateway"
   }
 }
 
@@ -49,7 +55,8 @@ resource "aws_route_table" "public_routing_table" {
 }
 
 resource "aws_route_table_association" "route_table_association" {
+  count = 2
   route_table_id = aws_route_table.public_routing_table.id
-  subnet_id      = aws_subnet.public_subnet.id
+  subnet_id      = aws_subnet.public_subnet[count.index].id
 
 }

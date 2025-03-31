@@ -3,7 +3,7 @@ include "root" {
 }
 
 terraform {
-  source = "../..//modules/network"
+  source = "../..//modules"
 
   before_hook "tflint" {
     commands     = ["apply", "plan"]
