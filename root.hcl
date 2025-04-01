@@ -1,8 +1,8 @@
 locals {
     envlocals =  read_terragrunt_config("env.hcl")
-    tfvars = jsondecode(read_tfvars_file("variables.tfvars"))
+    //tfvars = jsondecode(read_tfvars_file("variables.tfvars"))
 
-    environment = local.envlocals.locals.environment
+    //environment = local.envlocals.locals.environment
 }
 
 generate "terraform" {
@@ -28,7 +28,7 @@ generate "terraform" {
 
   EOF
 }
-
+/*
 generate "module" {
   path = "network.tf"
   if_exists = "overwrite_terragrunt"
@@ -36,17 +36,20 @@ generate "module" {
     module "network" {
       source = ".//network"
 
-      vcn_cidr = "${local.tfvars.vcn_cidr}"
+      cidr_block = "${local.tfvars.cidr_block}"
+      public_cidr_block_1 = "${local.tfvars.public_cidr_block_1}"
+      public_cidr_block_2 = "${local.tfvars.public_cidr_block_2}"
 
     }  
-    module "kubernetes" {
-      source = ".//kubernetes"
+    module "container" {
+      source = ".//container"
 
-      vpc_id = module.network.main_vpc.id
-      subnet_id = module.network.subnetwork[*].id
-      cluster_name = "${local.tfvars.cluster_name}"
-      region = "${local.envlocals.locals.region}"
-
+      ecs_cluster_name = "${local.tfvars.ecs_cluster_name}"
+      public_subnet_1 = module.network.public_subnet_1.id
+      public_subnet_2 = module.network.public_subnet_2.id
+      ecs_tasks = module.network.ecs_tasks.id
+      target_group_arn = module.network.target_group_arn.arn
+      
       depends_on = [module.network]
 
     }
@@ -65,3 +68,4 @@ remote_state {
     address       = "https://objectstorage.us-phoenix-1.oraclecloud.com/p/CZM27stAvBwo0zvR2zGNDJXtBGuyb7ycaX_qtZipE1BQzH1lgM7kIdiue2Mt6reG/n/idi1o0a010nx/b/terraform-state/o/${path_relative_to_include()}/terraform.tfstate"
   }
 }
+*/
