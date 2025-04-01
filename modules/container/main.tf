@@ -1,6 +1,6 @@
 # Create the ECS cluster
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "${var.ecs_cluster_name}"
+  name = var.ecs_cluster_name
   
   setting {
     name  = "containerInsights"
@@ -8,7 +8,7 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
   
   tags = {
-    Name = "${var.ecs_cluster_name}"
+    Name = var.ecs_cluster_name
   }
 }
 
@@ -80,5 +80,5 @@ resource "aws_ecs_service" "app" {
     container_port   = 80
   }
 
-  //depends_on = [aws_alb_listener.http]
+  #depends_on = [aws_alb_listener.http]
 }

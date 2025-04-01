@@ -1,4 +1,4 @@
-name: On pull request
+name: On Push
 env:
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -22,5 +22,8 @@ jobs:
     
         steps:
             - name: 'Terragrunt Apply'
-              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt apply --auto-approve
-              shell: bash    
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all apply --terragrunt-non-interactive
+              shell: bash  
+            - name: 'Fetch domain name'
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all output | grep domain_name
+              shell: bash  
