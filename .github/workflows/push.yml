@@ -1,4 +1,8 @@
 name: On pull request
+env:
+  AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
 
 on:
     push:
@@ -17,6 +21,6 @@ jobs:
         environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
     
         steps:
-            - name: 'Terragrunt Plan'
-              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt apply
+            - name: 'Terragrunt Apply'
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt apply --auto-approve
               shell: bash    
