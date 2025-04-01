@@ -1,4 +1,4 @@
-name: Deploy to development
+name: On Push Request
 env:
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -19,7 +19,11 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@master
-            
+
+            - name: Echo environment
+              run: echo "Using environment : ${environment}"
+              shell: bash
+
             - name: 'Terragrunt Init'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all init
               shell: bash
