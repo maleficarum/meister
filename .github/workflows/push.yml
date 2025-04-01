@@ -17,6 +17,6 @@ jobs:
         environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
     
         steps:
-            - name: 'Terragrunt Apply'
-              run: echo "Done"
-              shell: bash
+            - name: 'Terragrunt Plan'
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt apply
+              shell: bash    
