@@ -18,10 +18,10 @@ output "target_group_arn" {
   description = "APRN for ALB"
 }
 
-output "alb_dns_name" {
+/*output "alb_dns_name" {
   value       = aws_alb.main.dns_name
   description = "DNS name of the ALB"
-}
+}*/
 
 output "domain_name" {
   value = aws_alb.main.dns_name

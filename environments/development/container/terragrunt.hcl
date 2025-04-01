@@ -16,7 +16,7 @@ terraform {
   source = "../../..//modules/container"
 
   before_hook "tflint" {
-    commands     = ["apply", "plan"]
+    commands     = ["apply", "plan","destroy"]
     execute      = ["tflint"]
   }
 
@@ -29,16 +29,16 @@ terraform {
     required_var_files = ["variables.tfvars"]
   }
 }
-/*
+
 inputs = {
   ecs_cluster_name = "${include.env.locals.ecs_cluster_name}"
 
-  public_subnet_1 = depenency.network.outputs.public_subnet_1.id
-  public_subnet_2 = module.network.outputs.public_subnet_2.id
-  ecs_tasks = module.network.outputs.ecs_tasks.id
-  target_group_arn = module.network.outputs.target_group_arn.arn  
+  public_subnet_1 = dependency.network.outputs.public_subnet_1.id
+  public_subnet_2 = dependency.network.outputs.public_subnet_2.id
+  ecs_tasks = dependency.network.outputs.ecs_tasks.id
+  target_group_arn = dependency.network.outputs.target_group_arn.arn  
 }
-
+/*
 generate "module" {
   path = "container.tf"
   if_exists = "overwrite_terragrunt"
@@ -67,4 +67,10 @@ remote_state {
 
 dependency "network" {
   config_path = "../network"
+  mock_outputs = {
+    public_subnet_1 = { id = ""}
+    public_subnet_2 = { id = ""}    
+    ecs_tasks = { id = ""}
+    target_group_arn = { arn = ""}
+  }  
 }

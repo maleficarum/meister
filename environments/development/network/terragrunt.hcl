@@ -23,7 +23,8 @@ terraform {
   extra_arguments "custom_vars" {
     commands = [
       "apply",
-      "plan"
+      "plan",
+      "destroy"
     ]
 
     required_var_files = ["variables.tfvars"]

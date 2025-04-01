@@ -22,5 +22,8 @@ jobs:
     
         steps:
             - name: 'Terragrunt Apply'
-              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all apply --auto-approve
-              shell: bash    
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all apply --terragrunt-non-interactive
+              shell: bash  
+            - name: 'Fetch domain name'
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all output | grep domain_name
+              shell: bash  
