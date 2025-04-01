@@ -7,8 +7,6 @@ include "root" {
 terraform {
   source = "../..//modules"
 
-  //set_environment = run_cmd("export", "TG_VAR_FILE=variables.tfvars")
-
   before_hook "tflint" {
     commands     = ["apply", "plan"]
     execute      = ["tflint"]

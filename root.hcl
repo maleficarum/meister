@@ -2,7 +2,7 @@ locals {
     envlocals =  read_terragrunt_config("env.hcl")
     tfvars = jsondecode(read_tfvars_file("variables.tfvars"))
 
-    private_subnet_region = local.tfvars.private_subnet_region
+    environment = local.envlocals.locals.environment
 }
 
 generate "terraform" {
@@ -14,16 +14,15 @@ generate "terraform" {
     required_version = ">=1.9.7"
     required_providers {
 
-      google = {
-        source  = "hashicorp/google"
-        version = "~> 6.27.0"
+      aws = {
+        source  = "hashicorp/aws"
+        version = "~> 5.0"
       }
 
     }
   }
 
-  provider "google" {
-    project = "${local.envlocals.locals.project}"
+  provider "aws" {
     region = "${local.envlocals.locals.region}"
   }
 
@@ -36,22 +35,27 @@ generate "module" {
   contents = <<EOF
     module "network" {
       source = ".//network"
-      private_subnet_region = "${local.private_subnet_region}"
+
+      cidr_block = "${local.tfvars.cidr_block}"
+      public_cidr_block_1 = "${local.tfvars.public_cidr_block_1}"
+      public_cidr_block_2 = "${local.tfvars.public_cidr_block_2}"
+
     }  
-    module "kubernetes" {
-      source = ".//kubernetes"
+    module "container" {
+      source = ".//container"
 
-      main_network = module.network.main_network.id
-      subnetwork = module.network.subnetwork.id
-      cluster_location = "TEST"
-
+      ecs_cluster_name = "${local.tfvars.ecs_cluster_name}"
+      public_subnet_1 = module.network.public_subnet_1.id
+      public_subnet_2 = module.network.public_subnet_2.id
+      ecs_tasks = module.network.ecs_tasks.id
+      target_group_arn = module.network.target_group_arn.arn
+      
       depends_on = [module.network]
 
     }
     
   EOF
 }
-
 
 remote_state {
   backend = "http"

@@ -1,80 +1,158 @@
-resource "google_project_service" "compute" {
-    service = "compute.googleapis.com"
+data "aws_availability_zones" "available" {}
+
+# VPC for ECS
+resource "aws_vpc" "ecs_vpc" {
+  cidr_block = var.cidr_block
+  
+  tags = {
+    Name = "ecs-vpc"
+  }
 }
 
-resource "google_project_service" "container" {
-    service = "container.googleapis.com"
+# Subnets
+resource "aws_subnet" "public_subnet_1" {
+  vpc_id            = aws_vpc.ecs_vpc.id
+  cidr_block        = var.public_cidr_block_1
+  availability_zone = data.aws_availability_zones.available.names[0]
+  
+  tags = {
+    Name = "public-subnet-1"
+  }
 }
 
-resource "google_compute_network" "main_network" {
-    name = "main"
-    routing_mode = "REGIONAL"
-    auto_create_subnetworks = false
-    delete_default_routes_on_create = false
-
-    depends_on = [ google_project_service.compute, google_project_service.container ]
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id            = aws_vpc.ecs_vpc.id
+  cidr_block        = var.public_cidr_block_2
+  availability_zone = data.aws_availability_zones.available.names[1]
+  
+  tags = {
+    Name = "public-subnet-2"
+  }
 }
 
-resource "google_compute_subnetwork" "private" {
-    name = "private"
-    network = google_compute_network.main_network.id
-
-    ip_cidr_range = "10.0.0.0/16"
-    region = var.private_subnet_region
-
-    private_ip_google_access = true
-
-    secondary_ip_range {
-      range_name = "k8s-pod-range"
-      ip_cidr_range = "10.1.0.0/24"
-    }
-
-    secondary_ip_range {
-      range_name = "k8s-service-range"
-      ip_cidr_range = "10.2.0.0/24"
-    }    
+# Internet Gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.ecs_vpc.id
+  
+  tags = {
+    Name = "ecs-igw"
+  }
 }
 
-resource "google_compute_router" "router" {
-    name = "router"
-    region = var.private_subnet_region
-    network = google_compute_network.main_network.id
+# Route Table
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.ecs_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+  
+  tags = {
+    Name = "public-route-table"
+  }
 }
 
-resource "google_compute_address" "nat" {
-    name = "nat"
-    address_type = "EXTERNAL"
-    network_tier = "STANDARD"
-
-    depends_on = [ google_project_service.compute ]
-    
+# Route Table Associations
+resource "aws_route_table_association" "public_1" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public.id
 }
 
-resource "google_compute_router_nat" "nat" {
-    name = "nat"
-    router = google_compute_router.router.id
-    source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
-    region = var.private_subnet_region
-    nat_ip_allocate_option = "MANUAL_ONLY"
-
-    subnetwork {
-      name = google_compute_subnetwork.private.id
-      source_ip_ranges_to_nat = [ "ALL_IP_RANGES" ]
-    }
-
-    nat_ips = [ google_compute_address.nat.self_link ]
-    
+resource "aws_route_table_association" "public_2" {
+  subnet_id      = aws_subnet.public_subnet_2.id
+  route_table_id = aws_route_table.public.id
 }
 
-resource "google_compute_firewall" "firewall" {
-    name = "allow-ssh"
-    network = google_compute_network.main_network.id
+# Security Group for ECS tasks
+resource "aws_security_group" "ecs_tasks" {
+  name        = "ecs-tasks-sg"
+  description = "Allow inbound access from ALB only"
+  vpc_id      = aws_vpc.ecs_vpc.id
 
-    allow {
-      protocol = "tcp"
-      ports = [ "22" ]
-    }
+  ingress {
+    protocol        = "tcp"
+    from_port       = 80
+    to_port         = 80
+    security_groups = [aws_security_group.alb.id]
+  }
 
-    source_ranges = [ "0.0.0.0/0" ]
-    
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  tags = {
+    Name = "ecs-tasks-sg"
+  }
+}
+
+# ALB Security Group
+resource "aws_security_group" "alb" {
+  name        = "alb-sg"
+  description = "Allow HTTP traffic to ALB"
+  vpc_id      = aws_vpc.ecs_vpc.id
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 80
+    to_port     = 80
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  tags = {
+    Name = "alb-sg"
+  }
+}
+
+# ALB
+resource "aws_alb" "main" {
+  name               = "ecs-alb"
+  subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
+  security_groups    = [aws_security_group.alb.id]
+  internal           = false
+  load_balancer_type = "application"
+  
+  tags = {
+    Name = "ecs-alb"
+  }
+}
+
+# Target Group
+resource "aws_alb_target_group" "app" {
+  name        = "ecs-target-group"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.ecs_vpc.id
+  target_type = "ip"
+
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    interval            = 30
+    path                = "/"
+    matcher             = "200-399"
+  }
+}
+
+# Listener
+resource "aws_alb_listener" "http" {
+  load_balancer_arn = aws_alb.main.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_alb_target_group.app.arn
+  }
 }
