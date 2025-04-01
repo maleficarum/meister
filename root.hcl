@@ -36,17 +36,20 @@ generate "module" {
     module "network" {
       source = ".//network"
 
-      vcn_cidr = "${local.tfvars.vcn_cidr}"
+      cidr_block = "${local.tfvars.cidr_block}"
+      public-cidr_block_1 = "${local.tfvars.public-cidr_block_1}"
+      public-cidr_block_2 = "${local.tfvars.public-cidr_block_2}"
 
     }  
-    module "kubernetes" {
-      source = ".//kubernetes"
+    module "container" {
+      source = ".//container"
 
-      vpc_id = module.network.main_vpc.id
-      subnet_id = module.network.subnetwork[*].id
-      cluster_name = "${local.tfvars.cluster_name}"
-      region = "${local.envlocals.locals.region}"
-
+      ecs_cluster_name = "${local.tfvars.ecs_cluster_name}"
+      public_subnet_1 = module.network.public_subnet_1.id
+      public_subnet_2 = module.network.public_subnet_2.id
+      ecs_tasks = module.network.ecs_tasks.id
+      target_group_arn = module.network.target_group_arn.arn
+      
       depends_on = [module.network]
 
     }
