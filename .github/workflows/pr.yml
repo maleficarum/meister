@@ -21,7 +21,7 @@ jobs:
               uses: actions/checkout@master
 
             - name: Echo environment
-              run: echo "Using environment : ${environment}"
+              run: echo "Using environment [${environment}]"
               shell: bash
 
             - name: 'Terragrunt Init'
