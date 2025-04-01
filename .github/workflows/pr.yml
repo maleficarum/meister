@@ -24,9 +24,9 @@ jobs:
               run: echo "Using environment [${environment}]"
               shell: bash
 
-            #- name: 'Terragrunt Init'
-            #  run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all init
-            #  shell: bash
+            - name: 'Copy variables'
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment}/network/variables.tfvars ${GITHUB_WORKSPACE/modules/network}
+              shell: bash
 
             - name: 'TFLint init'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && tflint --init
