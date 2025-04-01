@@ -12,7 +12,7 @@ on:
 
 jobs:
     plan:
-        name: 'Terragrunt'
+        name: 'Terragrunt preparation'
         runs-on: 'self-hosted'
         environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
     
