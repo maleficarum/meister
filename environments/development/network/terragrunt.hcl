@@ -15,8 +15,10 @@ locals {
 terraform {
   source = "../../..//modules/network"
 
+  include_in_copy = ["variables.tfvars"]
+
   before_hook "tflint" {
-    commands     = ["apply"]
+    commands     = ["apply", "plan"]
     execute      = ["tflint"]
   }
 
