@@ -16,7 +16,7 @@ terraform {
   source = "../../..//modules/container"
 
   before_hook "tflint" {
-    commands     = ["apply", "plan"]
+    commands     = ["apply"]
     execute      = ["tflint"]
   }
 
