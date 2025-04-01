@@ -22,5 +22,5 @@ jobs:
     
         steps:
             - name: 'Terragrunt Apply'
-              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt apply --auto-approve
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all apply --auto-approve
               shell: bash    

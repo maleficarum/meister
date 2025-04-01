@@ -21,7 +21,7 @@ jobs:
               uses: actions/checkout@master
             
             - name: 'Terragrunt Init'
-              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt init
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all init
               shell: bash
 
             - name: 'TFLint init'
@@ -29,5 +29,5 @@ jobs:
               shell: bash              
 
             - name: 'Terragrunt Plan'
-              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt plan
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all plan
               shell: bash              
