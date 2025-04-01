@@ -1,8 +1,8 @@
 locals {
     envlocals =  read_terragrunt_config("env.hcl")
-    tfvars = jsondecode(read_tfvars_file("variables.tfvars"))
+    //tfvars = jsondecode(read_tfvars_file("variables.tfvars"))
 
-    environment = local.envlocals.locals.environment
+    //environment = local.envlocals.locals.environment
 }
 
 generate "terraform" {
@@ -28,7 +28,7 @@ generate "terraform" {
 
   EOF
 }
-
+/*
 generate "module" {
   path = "network.tf"
   if_exists = "overwrite_terragrunt"
@@ -68,3 +68,4 @@ remote_state {
     address       = "https://objectstorage.us-phoenix-1.oraclecloud.com/p/CZM27stAvBwo0zvR2zGNDJXtBGuyb7ycaX_qtZipE1BQzH1lgM7kIdiue2Mt6reG/n/idi1o0a010nx/b/terraform-state/o/${path_relative_to_include()}/terraform.tfstate"
   }
 }
+*/
