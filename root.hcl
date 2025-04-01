@@ -37,8 +37,8 @@ generate "module" {
       source = ".//network"
 
       cidr_block = "${local.tfvars.cidr_block}"
-      public-cidr_block_1 = "${local.tfvars.public-cidr_block_1}"
-      public-cidr_block_2 = "${local.tfvars.public-cidr_block_2}"
+      public_cidr_block_1 = "${local.tfvars.public_cidr_block_1}"
+      public_cidr_block_2 = "${local.tfvars.public_cidr_block_2}"
 
     }  
     module "container" {
