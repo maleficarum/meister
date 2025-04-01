@@ -16,14 +16,15 @@ terraform {
   source = "../../..//modules/container"
 
   before_hook "tflint" {
-    commands     = ["apply", "plan","destroy"]
+    commands     = ["apply", "plan"]
     execute      = ["tflint"]
   }
 
   extra_arguments "custom_vars" {
     commands = [
       "apply",
-      "plan"
+      "plan",
+      "destroy"
     ]
 
     required_var_files = ["variables.tfvars"]
