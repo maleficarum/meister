@@ -33,8 +33,15 @@ jobs:
               shell: bash              
 
             - name: 'TFSec execution'
-              run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f lovely
-              shell: bash
+              uses: aquasecurity/tfsec-action@v1.0.0
+              with:
+                soft_fail: true
+                format: sarif
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                additional_args: "--force-all-dirs --exclude-downloaded-modules"
+                
+              #run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f sarif
+              #shell: bash
 
             # Conflict with github actions https://github.com/gitleaks/gitleaks/issues/1306 using actions/checkout@master
             - name: 'Looking for GIT Leaks'
