@@ -32,15 +32,14 @@ jobs:
               run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f lovely
               shell: bash
 
-            - name: Checkout PR branch
-              run: |
-                git fetch origin ${{ github.event.pull_request.head.ref }}
-                git checkout ${{ github.event.pull_request.head.ref }}
-
-            - name: 'Looking for GIT Leaks'
-              uses: gitleaks/gitleaks-action@v2
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            # Conflict with github actions https://github.com/gitleaks/gitleaks/issues/1306
+            #- name: 'Looking for GIT Leaks'
+            #  uses: gitleaks/gitleaks-action@v2
+            #  env:
+            #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: 'Looking for git leaks'
+              run: cd ${GITHUB_WORKSPACE}/ && gitleaks git -v
+              shell: bash
 
             - name: 'Terragrunt Plan'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all plan
