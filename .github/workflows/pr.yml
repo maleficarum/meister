@@ -53,8 +53,15 @@ jobs:
             #  shell: bash
 
             - name: Code scanning
-              run: semgrep scan --config auto
+              run: semgrep scan --config auto --sarif --sarif-output=semgrep.sarif
               shell: bash
+
+            - name: 'Upload semgrep artifact'
+              uses: actions/upload-artifact@v4.6.2
+              if: always()
+              with:
+                name: semgrep-findings.sarif
+                path: semgrep.sarif              
 
             - name: 'Terragrunt Plan'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all plan
