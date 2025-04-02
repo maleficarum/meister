@@ -33,14 +33,15 @@ jobs:
               shell: bash              
 
             - name: 'TFSec execution'
-              uses: aquasecurity/tfsec-action@v1.0.0
+              run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f sarif -O tfsec.sarif
+              shell: bash
+
+            - name: 'Upload tfsec artifact'
+              uses: actions/upload-artifact@v3
+              if: always()
               with:
-                soft_fail: true
-                format: sarif
-                additional_args: "--force-all-dirs --exclude-downloaded-modules"
-                
-              #run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f sarif
-              #shell: bash
+                name: tfsec-findings
+                path: tfsec,sarif
 
             # Conflict with github actions https://github.com/gitleaks/gitleaks/issues/1306 using actions/checkout@master
             - name: 'Looking for GIT Leaks'
