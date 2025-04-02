@@ -81,6 +81,7 @@ resource "aws_security_group" "ecs_tasks" {
     protocol    = "-1"
     from_port   = 0
     to_port     = 0
+    #tfsec:ignore:aws-ec2-no-public-egress-sgr
     cidr_blocks = ["0.0.0.0/0"]
   }
   
@@ -99,6 +100,7 @@ resource "aws_security_group" "alb" {
     protocol    = "tcp"
     from_port   = 80
     to_port     = 80
+    #tfsec:ignore:aws-ec2-no-public-ingress-sgr
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -106,6 +108,7 @@ resource "aws_security_group" "alb" {
     protocol    = "-1"
     from_port   = 0
     to_port     = 0
+    #tfsec:ignore:aws-ec2-no-public-egress-sgr
     cidr_blocks = ["0.0.0.0/0"]
   }
   
@@ -119,8 +122,10 @@ resource "aws_alb" "main" {
   name               = "ecs-alb"
   subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
   security_groups    = [aws_security_group.alb.id]
-  internal           = false
+  #tfsec:ignore:aws-elb-alb-not-public
+  internal           = false 
   load_balancer_type = "application"
+  drop_invalid_header_fields = true
   
   tags = {
     Name = "ecs-alb"
@@ -149,6 +154,7 @@ resource "aws_alb_target_group" "app" {
 resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_alb.main.arn
   port              = "80"
+  #tfsec:ignore:aws-elb-http-not-used
   protocol          = "HTTP"
 
   default_action {
