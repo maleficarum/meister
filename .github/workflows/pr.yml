@@ -40,7 +40,7 @@ jobs:
               uses: actions/upload-artifact@v4.6.2
               if: always()
               with:
-                name: tfsec-findings
+                name: tfsec-findings.sarif
                 path: tfsec.sarif
 
             # Conflict with github actions https://github.com/gitleaks/gitleaks/issues/1306 using actions/checkout@master
