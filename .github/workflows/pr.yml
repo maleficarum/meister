@@ -29,7 +29,7 @@ jobs:
               shell: bash              
 
             - name: 'TFSec execution'
-              run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail
+              run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules -f lovely
               shell: bash
 
             - name: 'Terragrunt Plan'
