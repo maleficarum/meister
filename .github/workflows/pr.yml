@@ -33,7 +33,7 @@ jobs:
               shell: bash              
 
             - name: 'TFSec execution'
-              run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f sarif -O tfsec.sarif
+              run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f sarif -O tfsec.sarif && cat tfsec.sarif >> $GITHUB_STEP_SUMMARY
               shell: bash
 
             - name: 'Upload tfsec artifact'
@@ -53,7 +53,7 @@ jobs:
             #  shell: bash
 
             - name: Code scanning
-              run: semgrep scan --config auto --sarif --sarif-output=semgrep.sarif
+              run: semgrep scan --config auto --sarif --sarif-output=semgrep.sarif && cat semgrep.sarif >> >> $GITHUB_STEP_SUMMARY
               shell: bash
 
             - name: 'Upload tfsec artifact'
