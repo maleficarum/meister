@@ -59,4 +59,4 @@ jobs:
                 dockerhub-user: ${{ secrets.DOCKER_USER }}
                 dockerhub-password: ${{ secrets.DOCKER_PASSWORD }}
                 command: quickview,cves
-                
+                image: maleficarum/twitterapp
