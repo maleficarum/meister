@@ -51,4 +51,12 @@ jobs:
 
             - name: 'Terragrunt Plan'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all plan
-              shell: bash              
+              shell: bash    
+              
+            - name: Docker Scout
+              uses: docker/scout-action@v1.17.0
+              with:
+                dockerhub-user: ${{ secrets.DOCKER_USER }}
+                dockerhub-password: ${{ secrets.DOCKER_PASSWORD }}
+                command: quickview,cves
+                
