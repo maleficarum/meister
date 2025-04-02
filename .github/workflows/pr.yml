@@ -17,8 +17,12 @@ jobs:
         environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
     
         steps:
+            #- name: Checkout
+            #  uses: actions/checkout@master
             - name: Checkout
-              uses: actions/checkout@master
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 0            
 
             - name: Echo environment
               run: echo "Using environment [${environment}]"
@@ -33,13 +37,13 @@ jobs:
               shell: bash
 
             # Conflict with github actions https://github.com/gitleaks/gitleaks/issues/1306
-            #- name: 'Looking for GIT Leaks'
-            #  uses: gitleaks/gitleaks-action@v2
-            #  env:
-            #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            - name: 'Looking for git leaks'
-              run: cd ${GITHUB_WORKSPACE}/ && gitleaks git -v
-              shell: bash
+            - name: 'Looking for GIT Leaks'
+              uses: gitleaks/gitleaks-action@v2
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            #- name: 'Looking for git leaks'
+            #  run: cd ${GITHUB_WORKSPACE}/ && gitleaks git -v
+            #  shell: bash
 
             - name: 'Terragrunt Plan'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all plan
