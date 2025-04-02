@@ -41,7 +41,7 @@ jobs:
               if: always()
               with:
                 name: tfsec-findings
-                path: tfsec,sarif
+                path: tfsec.sarif
 
             # Conflict with github actions https://github.com/gitleaks/gitleaks/issues/1306 using actions/checkout@master
             - name: 'Looking for GIT Leaks'
