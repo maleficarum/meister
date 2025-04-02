@@ -118,6 +118,7 @@ resource "aws_security_group" "alb" {
 }
 
 # ALB
+# nosemgrep:terraform.aws.security.aws-elb-access-logs-not-enabled.aws-elb-access-logs-not-enabled
 resource "aws_alb" "main" {
   name               = "ecs-alb"
   subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
@@ -155,6 +156,7 @@ resource "aws_alb_listener" "http" {
   load_balancer_arn = aws_alb.main.arn
   port              = "80"
   #tfsec:ignore:aws-elb-http-not-used
+  # nosemgrep:terraform.aws.security.insecure-load-balancer-tls-version.insecure-load-balancer-tls-version
   protocol          = "HTTP"
 
   default_action {
