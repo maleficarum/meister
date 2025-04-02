@@ -28,6 +28,10 @@ jobs:
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && tflint --init
               shell: bash              
 
+            - name: 'TFSec execution'
+              run: cd ${GITHUB_WORKSPACE}/environments/${environment} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail
+              shell: bash
+
             - name: 'Terragrunt Plan'
               run: cd ${GITHUB_WORKSPACE}/environments/${environment} && terragrunt run-all plan
               shell: bash              
