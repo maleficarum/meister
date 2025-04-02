@@ -37,7 +37,6 @@ jobs:
               with:
                 soft_fail: true
                 format: sarif
-                github_token: ${{ secrets.GITHUB_TOKEN }}
                 additional_args: "--force-all-dirs --exclude-downloaded-modules"
                 
               #run: cd ${GITHUB_WORKSPACE} && tfsec --force-all-dirs --exclude-downloaded-modules --soft-fail -f sarif
